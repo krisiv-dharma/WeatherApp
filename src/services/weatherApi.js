@@ -21,3 +21,26 @@ export async function getCurrentWeather(latitude, longitude) {
   const data = await res.json();
   return data.current;
 }
+
+// Get a 5-day forecast for coordinates
+export async function getForecast(latitude, longitude) {
+  const res = await fetch(
+    `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}` +
+      `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max,uv_index_max` +
+      `&timezone=auto&forecast_days=5`
+  );
+  if (!res.ok) throw new Error("Could not fetch forecast data");
+  const data = await res.json();
+  const d = data.daily;
+
+  // Turn parallel arrays into an array of day objects
+  return d.time.map((date, i) => ({
+    date,
+    weatherCode: d.weather_code[i],
+    tempMax: d.temperature_2m_max[i],
+    tempMin: d.temperature_2m_min[i],
+    rainChance: d.precipitation_probability_max[i],
+    windMax: d.wind_speed_10m_max[i],
+    uvMax: d.uv_index_max[i],
+  }));
+}
