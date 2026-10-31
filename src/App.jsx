@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { getCoordinates, getCurrentWeather } from "./services/weatherApi";
+import { getWeatherInfo } from "./utils/weatherCodes";
 
 function App() {
   const [city, setCity] = useState("");
@@ -46,13 +47,17 @@ function App() {
       {error && <p>{error}</p>}
 
       {weather && place && (
-        <div>
-          <h2>{place.name}, {place.country}</h2>
-          <p>Temperature: {weather.temperature_2m}°C</p>
-          <p>Humidity: {weather.relative_humidity_2m}%</p>
-          <p>Wind: {weather.wind_speed_10m} km/h</p>
-        </div>
-      )}
+  <div>
+    <h2>{place.name}, {place.country}</h2>
+    <p style={{ fontSize: "3rem", margin: 0 }}>
+      {getWeatherInfo(weather.weather_code).icon}
+    </p>
+    <p>{getWeatherInfo(weather.weather_code).label}</p>
+    <p>Temperature: {weather.temperature_2m}°C</p>
+    <p>Humidity: {weather.relative_humidity_2m}%</p>
+    <p>Wind: {weather.wind_speed_10m} km/h</p>
+  </div>
+)}
     </div>
   );
 }
